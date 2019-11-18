@@ -1,0 +1,10 @@
+extends layouts/main
+
+block content
+    .form-container
+    form(action=`/videos${id}${routes.editVideo}`, method="post")
+        label(for="Video file")|Video File
+            input(type="file" name="file" value="choose file") 
+        input(type="text", name="title", placeholder="Title")
+        input(type="textarea", name="description", placeholder="Description")
+    a.form-container(href=`/videos${routes.deleteVideo}`)|Delete Video
