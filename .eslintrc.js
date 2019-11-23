@@ -11,5 +11,5 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2018
   },
-  rules: { "no-else-return": "off", "no-console": "off" }
+  rules: { "no-else-return": "off", "no-console": "off", camelcase: "off" }
 };
