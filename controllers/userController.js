@@ -114,21 +114,59 @@ export const getMe = (req, res) => {
 };
 
 export const users = (req, res) => res.render("users", { pageTitle: "User" });
-export const editProfile = (req, res) =>
+
+export const getEditProfile = (req, res) =>
   res.render("editProfile", { pageTitle: "Edit Profile" });
+
+export const postEditProfile = async (req, res) => {
+  const {
+    body: { name, email },
+    file
+  } = req;
+
+  try {
+    await User.findByIdAndUpdate(req.user.id, {
+      name,
+      email,
+      avatarUrl: file ? file.path : req.user.avatarUrl
+    });
+    res.redirect(routes.me);
+  } catch (error) {
+    res.redirect(routes.editProfile);
+  }
+};
 
 export const userDetail = async (req, res) => {
   const {
     params: { id }
   } = req;
-  console.log(req);
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate("videos");
+    console.log(user);
     res.render("userDetail", { pageTitle: "User Detail", user });
   } catch (error) {
     res.redirect(routes.home);
   }
 };
 
-export const changePassword = (req, res) =>
+export const getChangePassword = (req, res) =>
   res.render("changePassword", { pageTitle: "Change Password" });
+
+export const postChangePassword = async (req, res) => {
+  const {
+    body: { oldPassword, newPassword, newPassword1 }
+  } = req;
+
+  try {
+    if (newPassword === newPassword1) {
+      await req.user.changePassword(oldPassword, newPassword);
+      res.redirect(routes.me);
+    } else {
+      throw new Error("패스워드가 같지 않습니다");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400);
+    res.redirect(`/users${routes.changePassword}`);
+  }
+};
