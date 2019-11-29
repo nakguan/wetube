@@ -27,6 +27,11 @@ const GITHUB_CALLBACK = "/auth/github/callback";
 const FB = "/auth/facebook";
 const FB_CB = "/auth/facebook/callback";
 
+// API
+
+const API = "/api";
+const REGISTER_VIEW = "/:id/view";
+
 const routes = {
   home: HOME,
   join: JOIN,
@@ -70,7 +75,9 @@ const routes = {
   githubCallback: GITHUB_CALLBACK,
   facebook: FB,
   facebookCallback: FB_CB,
-  me: ME
+  me: ME,
+  api: API,
+  regiserView: REGISTER_VIEW
 };
 
 export default routes;

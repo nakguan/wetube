@@ -28,8 +28,9 @@ export const search = async (req, res) => {
   res.render("search", { pageTitle: "Search", searchingBy, videos });
 };
 
-export const getUpload = (req, res) =>
+export const getUpload = (req, res) => {
   res.render("upload", { pageTitle: "Upload" });
+};
 
 export const postUpload = async (req, res) => {
   const {
@@ -44,6 +45,7 @@ export const postUpload = async (req, res) => {
     creator: req.user.id
   });
 
+  // eslint-disable-next-line no-underscore-dangle
   req.user.videos.push(newVideo._id);
   req.user.save();
 
@@ -53,7 +55,6 @@ export const postUpload = async (req, res) => {
 
 export const videoDetail = async (req, res) => {
   const videoId = req.params.id;
-  // console.log(id);
   try {
     const video = await Video.findById(videoId).populate("creator");
     res.render("videoDetail", { pageTitle: video.title, video });
@@ -69,11 +70,13 @@ export const getEditVideo = async (req, res) => {
 
   try {
     const video = await Video.findById(id);
-    if (video.creator !== req.user.id) {
+    console.log(typeof video.creator, typeof req.user.id);
+    if (video.creator.toString() !== req.user.id) {
       throw new Error();
     }
     res.render("editVideo", { pageTitle: `Edit ${video.title}`, video });
   } catch (error) {
+    console.log(error);
     res.redirect(routes.home);
   }
 };
@@ -108,4 +111,23 @@ export const deleteVideo = async (req, res) => {
   }
 
   res.redirect(routes.home);
+};
+
+// Register Video Views
+
+export const postRegisterView = async (req, res) => {
+  const {
+    params: { id }
+  } = req;
+
+  try {
+    const video = await Video.findById(id);
+    video.views += 1;
+    video.save();
+    res.status(200);
+  } catch (error) {
+    res.status(400);
+  } finally {
+    res.end();
+  }
 };
