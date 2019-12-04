@@ -32,7 +32,8 @@ block content
                 input(type="text", placeholder="Add a comment")
             ul.video__comments-list#jsCommentList
                 each comment in video.comments.reverse()
-                    li
+                    li(id=comment.id)
                         span=comment.text
-
+                        if (loggedUser !== null && comment.creator.toString() === loggedUser.id)
+                            button.comment__delete#jsCommentDelete ❌
             
