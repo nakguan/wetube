@@ -1,5 +1,6 @@
 import routes from "../routes";
 import Video from "../models/Video";
+import Comment from "../models/Comment";
 
 export const home = async (req, res) => {
   // -> look for videos
@@ -56,7 +57,9 @@ export const postUpload = async (req, res) => {
 export const videoDetail = async (req, res) => {
   const videoId = req.params.id;
   try {
-    const video = await Video.findById(videoId).populate("creator");
+    const video = await Video.findById(videoId)
+      .populate("creator")
+      .populate("comments");
     res.render("videoDetail", { pageTitle: video.title, video });
   } catch (error) {
     console.log(error);
@@ -126,6 +129,29 @@ export const postRegisterView = async (req, res) => {
     video.save();
     res.status(200);
   } catch (error) {
+    res.status(400);
+  } finally {
+    res.end();
+  }
+};
+
+export const poastAddComment = async (req, res) => {
+  const {
+    params: { id },
+    body: { comment },
+    user
+  } = req;
+
+  try {
+    const video = await Video.findById(id);
+    const newComment = await Comment.create({
+      text: comment,
+      creator: user.id
+    });
+
+    video.comments.push(newComment.id);
+    video.save();
+  } catch (e) {
     res.status(400);
   } finally {
     res.end();
